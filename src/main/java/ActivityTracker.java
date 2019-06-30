@@ -1,6 +1,10 @@
+import javax.xml.parsers.FactoryConfigurationError;
+import javax.xml.stream.XMLStreamException;
+
 public class ActivityTracker {
 
-	public static void main(String[] args) throws XMLStreamException, FactoryConfigurationError {
+	@SuppressWarnings("restriction")
+	public static void main(String[] args) throws FactoryConfigurationError, XMLStreamException, javax.xml.stream.FactoryConfigurationError {
 		// TODO Auto-generated method stub
 
 		String feedURL = 

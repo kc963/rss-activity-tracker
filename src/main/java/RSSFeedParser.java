@@ -10,6 +10,9 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.Characters;
 import javax.xml.stream.events.XMLEvent;
 
+/**
+ * @author Kapil
+ */
 public class RSSFeedParser implements Cloneable {
 
 	private static RSSFeedParser parser;
@@ -27,6 +30,13 @@ public class RSSFeedParser implements Cloneable {
 		return parser;
 	}
 
+	/**
+	 * @param feedURL
+	 * @return LocalDate object containing the publication date present in the feed. Returns null if valid date not found.
+	 * @throws XMLStreamException
+	 * @throws FactoryConfigurationError
+	 * @description Processing the feed URL and connects to the feed server. After that, processing the feed to find a valid publication date. Shows appropriate error message if no valid date found.
+	 */
 	@SuppressWarnings("restriction")
 	public LocalDate getUpdateDate(String feedURL) throws XMLStreamException, FactoryConfigurationError {
 		InputStream feedStream = connectToFeedServer(feedURL);
@@ -42,6 +52,11 @@ public class RSSFeedParser implements Cloneable {
 		return date;
 	}
 
+	/**
+	 * @param feedURL
+	 * @return InputStream from the feedServer
+	 * @description Establishes a connection to the feed server and returns the stream for accessing feed data.
+	 */
 	private InputStream connectToFeedServer(String feedURL) {
 		InputStream stream = null;
 		try {
@@ -53,6 +68,12 @@ public class RSSFeedParser implements Cloneable {
 		return stream;
 	}
 
+	/**
+	 * @param eventReader
+	 * @return LocalDate object
+	 * @throws XMLStreamException
+	 * @description Iterates over the entire feed until it finds a valid publication date. Returns null if valid date is not found.
+	 */
 	private LocalDate getDate(XMLEventReader eventReader) throws XMLStreamException {
 		LocalDate date = null;
 		while (eventReader.hasNext()) {
@@ -72,6 +93,13 @@ public class RSSFeedParser implements Cloneable {
 		return date;
 	}
 
+	/**
+	 * @param event
+	 * @param eventReader
+	 * @return String containing publication date.
+	 * @throws XMLStreamException
+	 * @description Extracts the character string between the xml opening and closing tag and returns it.
+	 */
 	@SuppressWarnings("restriction")
 	private String getDateString(XMLEvent event, XMLEventReader eventReader) throws XMLStreamException {
 		String dateString = "";
@@ -112,6 +140,10 @@ public class RSSFeedParser implements Cloneable {
 		return date;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#clone()
+	 * @purpose Prevent cloning of objects.
+	 */
 	protected Object clone() throws CloneNotSupportedException {
 		throw new CloneNotSupportedException();
 	}

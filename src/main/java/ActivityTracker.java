@@ -10,7 +10,7 @@ import javax.xml.stream.XMLStreamException;
 
 public class ActivityTracker {
 
-	private static List<String> getInactiveFeeds(HashMap<String, List<String>> companyFeedMap, int days) throws XMLStreamException, javax.xml.stream.FactoryConfigurationError {
+	private List<String> getInactiveFeeds(HashMap<String, List<String>> companyFeedMap, int days) throws XMLStreamException, javax.xml.stream.FactoryConfigurationError {
 		List<String> inactiveFeeds = new LinkedList<String>();
 		
 		for(Map.Entry<String, List<String>> entry: companyFeedMap.entrySet()) {
@@ -33,6 +33,8 @@ public class ActivityTracker {
 	public static void main(String[] args) throws FactoryConfigurationError, XMLStreamException, javax.xml.stream.FactoryConfigurationError {
 		// TODO Auto-generated method stub
 
+		ActivityTracker tracker = new ActivityTracker();
+		
 		HashMap<String, List<String>> map = new HashMap<String, List<String>>();
 		map.put("BBC", new LinkedList<String>(Arrays.asList( "http://feeds.bbci.co.uk/news/rss.xml?edition=us", "http://feeds.bbci.co.uk/news/rss.xml?edition=uk", "http://feeds.bbci.co.uk/news/rss.xml?edition=int" )));
 		map.put("Real Time with Bill Maher", new LinkedList<String>(Arrays.asList( "http://billmaher.hbo.libsynpro.com/rss" )));
@@ -40,7 +42,9 @@ public class ActivityTracker {
 		map.put("Craigslist", new LinkedList<String>(Arrays.asList( "https://www.craigslist.org/about/best/all/index.rss" )));
 		map.put("ESPN", new LinkedList<String>(Arrays.asList( "https://www.espn.com/espn/rss/news", "https://www.espn.com/espn/rss/nfl/news", "https://www.espn.com/espn/rss/nba/news" )));
 		
-		System.out.println(getInactiveFeeds(map, 1));
+		List<String> inactiveFeeds = tracker.getInactiveFeeds(map, 1);
+		
+		System.out.println("Inactive feeds: " + inactiveFeeds);
 		
 	}
 

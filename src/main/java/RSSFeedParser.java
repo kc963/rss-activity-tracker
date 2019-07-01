@@ -38,7 +38,7 @@ public class RSSFeedParser implements Cloneable {
 	 * @description Processing the feed URL and connects to the feed server. After that, processing the feed to find a valid publication date. Shows appropriate error message if no valid date found.
 	 */
 	@SuppressWarnings("restriction")
-	public LocalDate getUpdateDate(String feedURL) throws XMLStreamException, FactoryConfigurationError {
+	public LocalDate getLastUpdateDate(String feedURL) throws XMLStreamException, FactoryConfigurationError {
 		InputStream feedStream = connectToFeedServer(feedURL);
 		if (feedStream == null) {
 			return null;
@@ -82,7 +82,7 @@ public class RSSFeedParser implements Cloneable {
 				String feedItem = event.asStartElement().getName().getLocalPart();
 				if (feedItem.toLowerCase().indexOf("date") > -1) {
 					try {
-						date = parseDate(getDateString(event, eventReader));
+						date = parseDate(getDateString(eventReader.nextEvent()));
 					} catch (Exception e) {
 						continue;
 					}
@@ -101,9 +101,8 @@ public class RSSFeedParser implements Cloneable {
 	 * @description Extracts the character string between the xml opening and closing tag and returns it.
 	 */
 	@SuppressWarnings("restriction")
-	private String getDateString(XMLEvent event, XMLEventReader eventReader) throws XMLStreamException {
+	private String getDateString(XMLEvent event) throws XMLStreamException {
 		String dateString = "";
-		event = eventReader.nextEvent();
 		if (event instanceof Characters) {
 			dateString = event.asCharacters().getData();
 		}

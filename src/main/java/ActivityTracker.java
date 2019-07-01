@@ -14,15 +14,20 @@ public class ActivityTracker {
 		List<String> inactiveFeeds = new LinkedList<String>();
 		
 		for(Map.Entry<String, List<String>> entry: companyFeedMap.entrySet()) {
+			boolean inactiveCompany = true;
 			for(String feedURL : entry.getValue()) {
-				LocalDate feedDate = RSSFeedParser.getInstance().getUpdateDate(feedURL);
+				LocalDate feedDate = RSSFeedParser.getInstance().getLastUpdateDate(feedURL);
 				if(feedDate == null) {
 					continue;
 				}
 				LocalDate currentDate = LocalDate.now();
-				if( currentDate.minusDays(days).compareTo(feedDate) > 0) {
-					inactiveFeeds.add(entry.getKey());
+				System.out.println("[ Feed Date : " + feedDate + " ]  [ Today's Date : " + currentDate + " ]  [ Days Limit : " + days + " ]");
+				if( currentDate.minusDays(days).compareTo(feedDate) <= 0) {
+					inactiveCompany = false;
 				}
+			}
+			if(inactiveCompany) {
+				inactiveFeeds.add(entry.getKey());
 			}
 		}
 		

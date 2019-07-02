@@ -5,4 +5,54 @@
   <version>0.0.1-SNAPSHOT</version>
   <name>rss-activity-tracker</name>
   <description>Activity tracker for RSS feeds to check inactivity</description>
+  
+  <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.1</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                </configuration>
+            </plugin>
+        
+        
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-jar-plugin</artifactId>
+            <version>2.4</version>
+            <configuration>
+                <archive>
+                    <index>true</index>
+                    <manifest>
+                        <mainClass>ActivityTracker</mainClass>
+                    </manifest>
+                </archive>
+            </configuration>
+        </plugin>
+        
+        <plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>3.0.0-M3</version>
+				<configuration>
+					<includes>
+						<include>TestRSSFeedParser</include>
+					</includes>
+				</configuration>
+			</plugin>
+        
+        </plugins>
+    </build>
+  
+  <dependencies>
+  	<dependency>
+  		<groupId>org.junit.jupiter</groupId>
+  		<artifactId>junit-jupiter-engine</artifactId>
+  		<version>5.0.2</version>
+  		<scope>test</scope>
+  	</dependency>
+  </dependencies>
+  
 </project>

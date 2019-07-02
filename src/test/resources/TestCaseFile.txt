@@ -1,0 +1,13 @@
+#NullInput
+$
+#InvalidInput
+Input:invalidfeed.xml
+$
+#ValidInput
+Input:validfeed.xml
+Output:1995-07-24
+$
+#MixedValidInvalidInput
+Input:validInvalidfeed.xml
+Output:2019-06-30
+$

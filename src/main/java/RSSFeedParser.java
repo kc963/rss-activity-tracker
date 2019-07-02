@@ -2,6 +2,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.time.LocalDate;
+import java.util.stream.Stream;
 
 import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLEventReader;
@@ -45,6 +46,7 @@ public class RSSFeedParser implements Cloneable {
 		}
 		XMLEventReader eventReader = XMLInputFactory.newInstance().createXMLEventReader(feedStream);
 		LocalDate date = getDate(eventReader);
+		disconnectFromFeedServer(feedStream);
 		if (date == null) {
 			System.out.println(
 					"ERROR : The Date Format in the feed is not supported by this program. Please refer to the Readme.");
@@ -74,8 +76,11 @@ public class RSSFeedParser implements Cloneable {
 	 * @throws XMLStreamException
 	 * @description Iterates over the entire feed until it finds a valid publication date. Returns null if valid date is not found.
 	 */
-	private LocalDate getDate(XMLEventReader eventReader) throws XMLStreamException {
+	public LocalDate getDate(XMLEventReader eventReader) throws XMLStreamException {
 		LocalDate date = null;
+		if(eventReader == null) {
+			return date;
+		}
 		while (eventReader.hasNext()) {
 			XMLEvent event = eventReader.nextEvent();
 			if (event.isStartElement()) {
@@ -106,16 +111,18 @@ public class RSSFeedParser implements Cloneable {
 		if (event instanceof Characters) {
 			dateString = event.asCharacters().getData();
 		}
+		System.out.println(dateString);
 		return dateString;
 	}
 
 	/**
 	 * @param dateString
 	 * @return LocalDate object. (YYYY-MM-DD)
+	 * @throws Exception 
 	 * @description Parses 2 date formats: (1) Day, DD MMM YYYY (2) YYYY-MM-DD and
 	 *              generates an object.
 	 */
-	private LocalDate parseDate(String dateString) {
+	private LocalDate parseDate(String dateString) throws Exception {
 		String DD = "", MM = "", YYYY = "";
 		if (dateString.indexOf(',') < 5 && dateString.indexOf(',') > -1) {
 			// process format "Day, DD MON YYYY" (Example : Sat, 10 Jun 2019)
@@ -135,8 +142,23 @@ public class RSSFeedParser implements Cloneable {
 			YYYY = dateString.substring(0, 4);
 		}
 		dateString = YYYY + "-" + MM + "-" + DD;
-		LocalDate date = LocalDate.parse(dateString);
+		LocalDate date = null;
+		try {
+			date = LocalDate.parse(dateString);
+		} catch(Exception e) {
+			throw e;
+		}
 		return date;
+	}
+	
+	/**
+	 * @param feedStream
+	 * @description Closes the connection with the feed server by closing the stream.
+	 */
+	private void disconnectFromFeedServer(InputStream feedStream) {
+		try {
+			feedStream.close();
+		} catch (IOException e) {}
 	}
 
 	/* (non-Javadoc)

@@ -59,7 +59,7 @@ public class RSSFeedParser implements Cloneable {
 	 * @return InputStream from the feedServer
 	 * @description Establishes a connection to the feed server and returns the stream for accessing feed data.
 	 */
-	private InputStream connectToFeedServer(String feedURL) {
+	public InputStream connectToFeedServer(String feedURL) {
 		InputStream stream = null;
 		try {
 			URL url = new URL(feedURL);
@@ -83,6 +83,7 @@ public class RSSFeedParser implements Cloneable {
 		}
 		while (eventReader.hasNext()) {
 			XMLEvent event = eventReader.nextEvent();
+			//System.out.println(event);
 			if (event.isStartElement()) {
 				String feedItem = event.asStartElement().getName().getLocalPart();
 				if (feedItem.toLowerCase().indexOf("date") > -1) {
@@ -111,7 +112,7 @@ public class RSSFeedParser implements Cloneable {
 		if (event instanceof Characters) {
 			dateString = event.asCharacters().getData();
 		}
-		System.out.println(dateString);
+		//System.out.println(dateString);
 		return dateString;
 	}
 

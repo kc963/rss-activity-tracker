@@ -42,10 +42,11 @@ public class ActivityTracker {
 		
 		HashMap<String, List<String>> map = new HashMap<String, List<String>>();
 		//map.put("BBC", new LinkedList<String>(Arrays.asList( "http://feeds.bbci.co.uk/news/rss.xml?edition=us", "http://feeds.bbci.co.uk/news/rss.xml?edition=uk", "http://feeds.bbci.co.uk/news/rss.xml?edition=int" )));
-		map.put("Real Time with Bill Maher", new LinkedList<String>(Arrays.asList( "http://billmaher.hbo.libsynpro.com/rss" )));
+		//map.put("Real Time with Bill Maher", new LinkedList<String>(Arrays.asList( "http://billmaher.hbo.libsynpro.com/rss" )));
 		//map.put("Bill Simmons Podcast", new LinkedList<String>(Arrays.asList( "https://rss.art19.com/the-bill-simmons-podcast" )));
 		//map.put("Craigslist", new LinkedList<String>(Arrays.asList( "https://www.craigslist.org/about/best/all/index.rss" )));
 		//map.put("ESPN", new LinkedList<String>(Arrays.asList( "https://www.espn.com/espn/rss/news", "https://www.espn.com/espn/rss/nfl/news", "https://www.espn.com/espn/rss/nba/news" )));
+		map.put("KC", new LinkedList<String>(Arrays.asList("https://drive.google.com/open?id=1lFJKOGKh-rPivR352bj1taWOHQtF61tx")));
 		
 		List<String> inactiveFeeds = tracker.getInactiveFeeds(map, 1);
 		

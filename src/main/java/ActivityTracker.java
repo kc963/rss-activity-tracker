@@ -10,18 +10,25 @@ import javax.xml.stream.XMLStreamException;
 
 public class ActivityTracker {
 
-	private List<String> getInactiveFeeds(HashMap<String, List<String>> companyFeedMap, int days) throws XMLStreamException, javax.xml.stream.FactoryConfigurationError {
+	public List<String> getInactiveFeeds(Map<String, List<String>> companyFeedMap, int days) throws XMLStreamException, javax.xml.stream.FactoryConfigurationError {
 		List<String> inactiveFeeds = new LinkedList<String>();
+		if(days < 0) {
+			System.out.println("ERROR: Number of Days cannot be less than 0.");
+			return inactiveFeeds;
+		}
+		
+		if(companyFeedMap == null) {
+			return inactiveFeeds;
+		}
 		
 		for(Map.Entry<String, List<String>> entry: companyFeedMap.entrySet()) {
 			boolean inactiveCompany = true;
 			for(String feedURL : entry.getValue()) {
-				LocalDate feedDate = RSSFeedParser.getInstance().getLastUpdateDate(feedURL);
+				LocalDate feedDate = getUpdateDate(feedURL);
 				if(feedDate == null) {
 					continue;
 				}
 				LocalDate currentDate = LocalDate.now();
-				System.out.println("[ Feed Date : " + feedDate + " ]  [ Today's Date : " + currentDate + " ]  [ Days Limit : " + days + " ]");
 				if( currentDate.minusDays(days).compareTo(feedDate) <= 0) {
 					inactiveCompany = false;
 				}
@@ -34,22 +41,19 @@ public class ActivityTracker {
 		return inactiveFeeds;
 	}
 	
+	public LocalDate getUpdateDate(String feedURL) throws XMLStreamException, javax.xml.stream.FactoryConfigurationError {
+		return RSSFeedParser.getInstance().getLastUpdateDate(feedURL);
+	}
+	
 	@SuppressWarnings("restriction")
 	public static void main(String[] args) throws FactoryConfigurationError, XMLStreamException, javax.xml.stream.FactoryConfigurationError {
-		// TODO Auto-generated method stub
-
 		ActivityTracker tracker = new ActivityTracker();
-		
 		HashMap<String, List<String>> map = new HashMap<String, List<String>>();
-		//map.put("BBC", new LinkedList<String>(Arrays.asList( "http://feeds.bbci.co.uk/news/rss.xml?edition=us", "http://feeds.bbci.co.uk/news/rss.xml?edition=uk", "http://feeds.bbci.co.uk/news/rss.xml?edition=int" )));
-		//map.put("Real Time with Bill Maher", new LinkedList<String>(Arrays.asList( "http://billmaher.hbo.libsynpro.com/rss" )));
-		//map.put("Bill Simmons Podcast", new LinkedList<String>(Arrays.asList( "https://rss.art19.com/the-bill-simmons-podcast" )));
-		//map.put("Craigslist", new LinkedList<String>(Arrays.asList( "https://www.craigslist.org/about/best/all/index.rss" )));
-		//map.put("ESPN", new LinkedList<String>(Arrays.asList( "https://www.espn.com/espn/rss/news", "https://www.espn.com/espn/rss/nfl/news", "https://www.espn.com/espn/rss/nba/news" )));
-		map.put("KC", new LinkedList<String>(Arrays.asList("https://drive.google.com/open?id=1lFJKOGKh-rPivR352bj1taWOHQtF61tx")));
-		
-		List<String> inactiveFeeds = tracker.getInactiveFeeds(map, 1);
-		
+		List<String> bbcFeed = Arrays.asList("http://feeds.bbci.co.uk/news/rss.xml?edition=us");
+		map.put("BBC", bbcFeed);
+		List<String> craigslistFeed = Arrays.asList("https://www.craigslist.org/about/best/all/index.rss");
+		map.put("Craigslist", craigslistFeed);
+		List<String> inactiveFeeds = tracker.getInactiveFeeds(map, 10);
 		System.out.println("Inactive feeds: " + inactiveFeeds);
 		
 	}

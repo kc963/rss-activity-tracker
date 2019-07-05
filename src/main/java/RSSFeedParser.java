@@ -1,6 +1,7 @@
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.stream.Stream;
 
@@ -41,9 +42,12 @@ public class RSSFeedParser implements Cloneable {
 	@SuppressWarnings("restriction")
 	public LocalDate getLastUpdateDate(String feedURL) throws XMLStreamException, FactoryConfigurationError {
 		InputStream feedStream = connectToFeedServer(feedURL);
+		//System.out.println("yo");
+		//System.out.println(new String(feedStream.readAllBytes(), StandardCharsets.UTF_8));
 		if (feedStream == null) {
 			return null;
 		}
+		//System.out.println("TEST");
 		XMLEventReader eventReader = XMLInputFactory.newInstance().createXMLEventReader(feedStream);
 		LocalDate date = getDate(eventReader);
 		disconnectFromFeedServer(feedStream);
@@ -59,7 +63,7 @@ public class RSSFeedParser implements Cloneable {
 	 * @return InputStream from the feedServer
 	 * @description Establishes a connection to the feed server and returns the stream for accessing feed data.
 	 */
-	public InputStream connectToFeedServer(String feedURL) {
+	InputStream connectToFeedServer(String feedURL) {
 		InputStream stream = null;
 		try {
 			URL url = new URL(feedURL);
@@ -76,19 +80,19 @@ public class RSSFeedParser implements Cloneable {
 	 * @throws XMLStreamException
 	 * @description Iterates over the entire feed until it finds a valid publication date. Returns null if valid date is not found.
 	 */
-	public LocalDate getDate(XMLEventReader eventReader) throws XMLStreamException {
+	private LocalDate getDate(XMLEventReader eventReader) throws XMLStreamException {
 		LocalDate date = null;
 		if(eventReader == null) {
 			return date;
 		}
 		while (eventReader.hasNext()) {
 			XMLEvent event = eventReader.nextEvent();
-			//System.out.println(event);
 			if (event.isStartElement()) {
 				String feedItem = event.asStartElement().getName().getLocalPart();
 				if (feedItem.toLowerCase().indexOf("date") > -1) {
 					try {
 						date = parseDate(getDateString(eventReader.nextEvent()));
+						//System.out.println(date);
 					} catch (Exception e) {
 						continue;
 					}

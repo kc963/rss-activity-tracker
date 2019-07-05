@@ -15,66 +15,31 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
+import org.mockito.ArgumentMatchers;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
 
 @TestInstance(Lifecycle.PER_CLASS)
 public class TestRSSFeedParser {
 
-	final String testCaseFile = "TestCaseFile.txt";
+	final String testCaseFile = "RSSFeedParserTestCaseFile.txt";
 	RSSFeedParser feedParser;
 	Map<String, TestCase> testCases;
-	
+
+	@PrepareForTest(RSSFeedParser.class)
 	@BeforeAll
 	public void beforeAll() throws XMLStreamException, FactoryConfigurationError, IOException {
-		//feedParser = RSSFeedParser.getInstance();
 		testCases = new HashMap<String, TestCase>();
 		loadTestCases();
 		feedParser = Mockito.spy(RSSFeedParser.getInstance());
-		
-        
-	}
-	
-	@Test
-	void testGetDate_NullInput() throws XMLStreamException {
-		String testCaseIdentificationKey = "GetDate_NullOrder";
-		XMLEventReader input = null;
-		LocalDate expectedOutput = null;
-		LocalDate actualOutput = feedParser.getDate(input);
-		assertEquals(expectedOutput, actualOutput);
-	}
-	
-	@Test
-	void testGetDate_MixedValidInvalidInput() throws XMLStreamException {
-		String testCaseIdentificationKey = "GetDate_MixedValidInvalidInput";
-		XMLEventReader input = (XMLEventReader) testCases.get(testCaseIdentificationKey).getInput();
-		LocalDate expectedOutput = (LocalDate)testCases.get(testCaseIdentificationKey).getOutput();
-		LocalDate actualOutput = feedParser.getDate(input);
-		assertEquals(expectedOutput, actualOutput);
-	}
-	
-	@Test
-	void testGetDate_InvalidInput() throws XMLStreamException {
-		String testCaseIdentificationKey = "GetDate_InvalidInput";
-		XMLEventReader input = (XMLEventReader) testCases.get(testCaseIdentificationKey).getInput();
-		LocalDate expectedOutput = (LocalDate)testCases.get(testCaseIdentificationKey).getOutput();
-		LocalDate actualOutput = feedParser.getDate(input);
-		assertEquals(expectedOutput, actualOutput);
-	}
-	
-	@Test
-	void testGetDate_ValidInput() throws XMLStreamException {
-		String testCaseIdentificationKey = "GetDate_ValidInput";
-		XMLEventReader input = (XMLEventReader) testCases.get(testCaseIdentificationKey).getInput();
-		LocalDate expectedOutput = (LocalDate)testCases.get(testCaseIdentificationKey).getOutput();
-		LocalDate actualOutput = feedParser.getDate(input);
-		assertEquals(expectedOutput, actualOutput);
 	}
 	
 	// GetLastUpdateDate Tests
 	
 	@Test
-	void testGetLastUpdateDate_NullInput() throws XMLStreamException {
+	void testGetLastUpdateDate_NullInput() throws XMLStreamException, FactoryConfigurationError, IOException {
 		String testCaseIdentificationKey = "GetLastUpdateDate_NullOrder";
 		String input = null;
 		LocalDate expectedOutput = null;
@@ -83,34 +48,34 @@ public class TestRSSFeedParser {
 	}
 	
 	@Test
-	void testGetLastUpdateDate_MixedValidInvalidInput() throws XMLStreamException {
+	void testGetLastUpdateDate_MixedValidInvalidInput() throws Exception {
 		String testCaseIdentificationKey = "GetLastUpdateDate_MixedValidInvalidInput";
 		String input = (String) testCases.get(testCaseIdentificationKey).getInput();
 		LocalDate expectedOutput = (LocalDate)testCases.get(testCaseIdentificationKey).getOutput();
 		InputStream testFileStream = this.getClass().getClassLoader().getResourceAsStream((String)input);
-        PowerMockito.when(feedParser.connectToFeedServer(Mockito.anyString())).thenReturn(testFileStream);
+		Mockito.when(feedParser.connectToFeedServer(input)).thenReturn(testFileStream);
 		LocalDate actualOutput = feedParser.getLastUpdateDate(input);
 		assertEquals(expectedOutput, actualOutput);
 	}
 	
 	@Test
-	void testGetLastUpdateDate_InvalidInput() throws XMLStreamException {
+	void testGetLastUpdateDate_InvalidInput() throws Exception {
 		String testCaseIdentificationKey = "GetLastUpdateDate_InvalidInput";
 		String input = (String) testCases.get(testCaseIdentificationKey).getInput();
 		LocalDate expectedOutput = (LocalDate)testCases.get(testCaseIdentificationKey).getOutput();
 		InputStream testFileStream = this.getClass().getClassLoader().getResourceAsStream((String)input);
-        PowerMockito.when(feedParser.connectToFeedServer(Mockito.anyString())).thenReturn(testFileStream);
+        Mockito.when(feedParser.connectToFeedServer(input)).thenReturn(testFileStream);
 		LocalDate actualOutput = feedParser.getLastUpdateDate(input);
 		assertEquals(expectedOutput, actualOutput);
 	}
 	
 	@Test
-	void testGetLastUpdateDate_ValidInput() throws XMLStreamException {
+	void testGetLastUpdateDate_ValidInput() throws Exception {
 		String testCaseIdentificationKey = "GetLastUpdateDate_ValidInput";
 		String input = (String) testCases.get(testCaseIdentificationKey).getInput();
 		LocalDate expectedOutput = (LocalDate)testCases.get(testCaseIdentificationKey).getOutput();
 		InputStream testFileStream = this.getClass().getClassLoader().getResourceAsStream((String)input);
-        PowerMockito.when(feedParser.connectToFeedServer(Mockito.anyString())).thenReturn(testFileStream);
+        Mockito.when(feedParser.connectToFeedServer(input)).thenReturn(testFileStream);
 		LocalDate actualOutput = feedParser.getLastUpdateDate(input);
 		assertEquals(expectedOutput, actualOutput);
 	}
@@ -136,7 +101,6 @@ public class TestRSSFeedParser {
 					}
 				} while(scanner.hasNext() && firstCharacter != '$');
 				testCases.put("GetLastUpdateDate_" + testCaseName, new GetLastUpdateDateTestCase(testCaseName, feedURL, output));
-				testCases.put("GetDate_" + testCaseName, new GetDateTestCase(testCaseName, feedURL, output));
 			}
 		}
 	}
